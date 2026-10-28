@@ -134,14 +134,20 @@ class _TelaCadastroState extends State<TelaCadastro> {
 
   void _registrarOcorrencia() {
     if (_formKey.currentState!.validate()) {
+      final novaOcorrencia = Ocorrencia(
+        categoria: _categoriaSelecionada!,
+        descricao: _descricaoController.text.trim(),
+      );
+
+      ocorrencias.add(novaOcorrencia);
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            'Formulário validado! '
-            'O salvamento será implementado depois.',
-          ),
+          content: Text('Ocorrência registrada com sucesso!'),
         ),
       );
+
+      Navigator.pop(context);
     }
   }
 
@@ -240,7 +246,9 @@ class _TelaCadastroState extends State<TelaCadastro> {
       ),
     );
   }
+    
 }
+
 
 class TelaOcorrencias extends StatelessWidget {
   const TelaOcorrencias({super.key});
@@ -251,11 +259,61 @@ class TelaOcorrencias extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Ocorrências'),
       ),
-      body: const Center(
-        child: Text(
-          'Aqui serão exibidas as ocorrências registradas.',
-        ),
-      ),
+      body: ocorrencias.isEmpty
+          ? const Center(
+              child: Text(
+                'Nenhuma ocorrência registrada ainda.',
+              ),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: ocorrencias.length,
+              itemBuilder: (context, index) {
+                final ocorrencia = ocorrencias[index];
+
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.location_on,
+                      color: Colors.green,
+                      size: 32,
+                    ),
+                    title: Text(
+                      ocorrencia.categoria,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(ocorrencia.descricao),
+                    ),
+                  ),
+                );
+              },
+            ),
     );
   }
 }
+
+
+class Ocorrencia {
+  final String categoria;
+  final String descricao;
+
+  Ocorrencia({
+    required this.categoria,
+    required this.descricao,
+  });
+}
+
+// Lista temporária compartilhada entre as telas.
+final List<Ocorrencia> ocorrencias = [];
+
+
+
+
+
+
+
